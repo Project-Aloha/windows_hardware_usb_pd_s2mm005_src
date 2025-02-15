@@ -251,6 +251,8 @@ s2mm005DevicePrepareHardware(
 
 	devContext->InitializedSpbHardware = TRUE;
 
+	S2mm005_Get_TypeC_Status(Device, &TypeC_Status_initial);
+
 exit:
 	TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Leaving %!FUNC!: Status = 0x%08lX\n", status);
 	return status;

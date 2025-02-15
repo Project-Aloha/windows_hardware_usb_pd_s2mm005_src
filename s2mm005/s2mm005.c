@@ -8,10 +8,10 @@ OnInterruptIsr(
     IN ULONG MessageID
 )
 {
-    BOOLEAN status = TRUE;
-
-    UNREFERENCED_PARAMETER(Interrupt);
     UNREFERENCED_PARAMETER(MessageID);
+    NTSTATUS status = STATUS_SUCCESS;
+
+    TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Entry");
 
     return status;
 }

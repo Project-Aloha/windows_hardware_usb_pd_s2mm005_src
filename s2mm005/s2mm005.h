@@ -40,8 +40,10 @@
 	(((signed __int64)(seconds)) * MILLISECONDS(1000L))
 #endif
 
-BOOLEAN
-OnInterruptIsr(
-    IN WDFINTERRUPT Interrupt,
-    IN ULONG MessageID
+EVT_WDF_INTERRUPT_ISR OnInterruptIsr;
+
+NTSTATUS
+S2mm005_Get_TypeC_Status(
+	WDFDEVICE Device,
+	PULONG TypeC_Status
 );

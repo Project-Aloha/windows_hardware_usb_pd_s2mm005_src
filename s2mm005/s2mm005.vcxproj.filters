@@ -56,5 +56,8 @@
     <ClCompile Include="s2mm005.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="s2mm005_cc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

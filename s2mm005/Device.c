@@ -132,6 +132,8 @@ s2mm005DevicePrepareHardware(
 {
 	NTSTATUS status = STATUS_INSUFFICIENT_RESOURCES;
 	PCM_PARTIAL_RESOURCE_DESCRIPTOR res, resRaw;
+	ULONG TypeC_Status_initial;
+	WDF_INTERRUPT_CONFIG interruptConfig;
 	ULONG resourceCount;
 	ULONG i;
 
@@ -182,18 +184,41 @@ s2mm005DevicePrepareHardware(
 			}
 			break;
 		}
-        case CmResourceTypeInterrupt:
+		case CmResourceTypeInterrupt:
 		{
-            if (InterruptFound == FALSE)
-            {
-				TraceEvents(
-					TRACE_LEVEL_INFORMATION,
-					TRACE_DRIVER,
-					"Found Interrupt Gpio!");
-                InterruptFound = TRUE;
-                interruptIndex = i;
-            }
-            break;
+		    if (InterruptFound = FALSE)
+			{
+				WDF_INTERRUPT_CONFIG_INIT(
+					&interruptConfig,
+					OnInterruptIsr,
+					NULL
+				);
+
+				interruptConfig.InterruptTranslated = res;
+				interruptConfig.InterruptRaw = resRaw;
+				interruptConfig.PassiveHandling = TRUE;
+
+				status = WdfInterruptCreate(
+					Device,
+					&interruptConfig,
+					WDF_NO_OBJECT_ATTRIBUTES,
+					&devContext->Interrupt
+				);
+
+				if (!NT_SUCCESS(status))
+				{
+					TraceEvents(
+						TRACE_LEVEL_ERROR,
+						TRACE_DRIVER,
+						"WdfInterruptCreate failed %!STATUS!",
+						status
+					);
+
+					goto exit;
+				}
+			}
+			InterruptFound = TRUE;
+			break;
 		}
 		default:
 			//
@@ -225,26 +250,6 @@ s2mm005DevicePrepareHardware(
 	}
 
 	devContext->InitializedSpbHardware = TRUE;
-
-	WDF_INTERRUPT_CONFIG interruptConfig;
-	WDF_INTERRUPT_CONFIG_INIT(
-		&interruptConfig,
-		OnInterruptIsr,
-		NULL);
-
-	interruptConfig.PassiveHandling = TRUE;
-	interruptConfig.InterruptTranslated = WdfCmResourceListGetDescriptor(
-		ResourcesTranslated,
-		interruptIndex);
-	interruptConfig.InterruptRaw = WdfCmResourceListGetDescriptor(
-		ResourcesRaw,
-		interruptIndex);
-
-	status = WdfInterruptCreate(
-		devContext->Device,
-		&interruptConfig,
-		WDF_NO_OBJECT_ATTRIBUTES,
-		&devContext->Interrupt);
 
 exit:
 	TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Leaving %!FUNC!: Status = 0x%08lX\n", status);

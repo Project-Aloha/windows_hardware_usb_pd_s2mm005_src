@@ -33,30 +33,110 @@
 #define I2C_VERBOSE_LOGGING 0
 
 NTSTATUS
+SpbDeviceWrite(
+	IN SPB_CONTEXT* SpbContext,
+	IN PVOID Data,
+	IN ULONG Length
+)
+{
+	WDF_MEMORY_DESCRIPTOR  inMemoryDescriptor;
+	ULONG_PTR  bytesWritten = (ULONG_PTR)NULL;
+	NTSTATUS status;
+
+
+	WDF_MEMORY_DESCRIPTOR_INIT_BUFFER(&inMemoryDescriptor,
+		Data,
+		Length);
+
+	status = WdfIoTargetSendWriteSynchronously(
+		SpbContext->SpbIoTarget,
+		NULL,
+		&inMemoryDescriptor,
+		NULL,
+		NULL,
+		&bytesWritten
+	);
+	return status;
+}
+
+
+NTSTATUS
+SpbDeviceWriteRead(
+	IN SPB_CONTEXT* SpbContext,
+	IN PVOID pInputBuffer,
+	IN PVOID pOutputBuffer,
+	IN ULONG inputLength,
+	IN ULONG outputLength
+)
+{
+	WDF_MEMORY_DESCRIPTOR  inMemoryDescriptor;
+	WDF_MEMORY_DESCRIPTOR  outMemoryDescriptor;
+	ULONG_PTR  bytesWritten = (ULONG_PTR)NULL;
+	ULONG_PTR  bytesRead = (ULONG_PTR)NULL;
+	NTSTATUS status;
+
+
+	WDF_MEMORY_DESCRIPTOR_INIT_BUFFER(&inMemoryDescriptor,
+		pInputBuffer,
+		inputLength);
+
+	status = WdfIoTargetSendWriteSynchronously(
+		SpbContext->SpbIoTarget,
+		NULL,
+		&inMemoryDescriptor,
+		NULL,
+		NULL,
+		&bytesWritten);
+	if (!NT_SUCCESS(status))
+	{
+		TraceEvents(
+			TRACE_LEVEL_ERROR,
+			TRACE_DRIVER,
+			"Error writing to Spb - 0x%08lX",
+			status);
+	}
+
+
+	WDF_MEMORY_DESCRIPTOR_INIT_BUFFER(&outMemoryDescriptor,
+		pOutputBuffer,
+		outputLength);
+
+	status = WdfIoTargetSendReadSynchronously(
+		SpbContext->SpbIoTarget,
+		NULL,
+		&outMemoryDescriptor,
+		NULL,
+		NULL,
+		&bytesRead
+	);
+	return status;
+}
+
+NTSTATUS
 SpbDoWriteDataSynchronously(
-	IN SPB_CONTEXT *SpbContext,
+	IN SPB_CONTEXT* SpbContext,
 	IN UCHAR Address,
 	IN PVOID Data,
 	IN ULONG Length)
-/*++
+	/*++
 
-  Routine Description:
+	  Routine Description:
 
-	This helper routine abstracts creating and sending an I/O
-	request (I2C Write) to the Spb I/O target.
+		This helper routine abstracts creating and sending an I/O
+		request (I2C Write) to the Spb I/O target.
 
-  Arguments:
+	  Arguments:
 
-	SpbContext - Pointer to the current device context
-	Address    - The I2C register address to write to
-	Data       - A buffer to receive the data at at the above address
-	Length     - The amount of data to be read from the above address
+		SpbContext - Pointer to the current device context
+		Address    - The I2C register address to write to
+		Data       - A buffer to receive the data at at the above address
+		Length     - The amount of data to be read from the above address
 
-  Return Value:
+	  Return Value:
 
-	NTSTATUS Status indicating success or failure
+		NTSTATUS Status indicating success or failure
 
---*/
+	--*/
 {
 	PUCHAR buffer;
 	ULONG length;
@@ -156,30 +236,30 @@ exit:
 
 NTSTATUS
 SpbWriteDataSynchronously(
-	IN SPB_CONTEXT *SpbContext,
+	IN SPB_CONTEXT* SpbContext,
 	IN UCHAR Address,
 	IN PVOID Data,
 	IN ULONG Length)
-/*++
+	/*++
 
-  Routine Description:
+	  Routine Description:
 
-	This routine abstracts creating and sending an I/O
-	request (I2C Write) to the Spb I/O target and utilizes
-	a helper routine to do work inside of locked code.
+		This routine abstracts creating and sending an I/O
+		request (I2C Write) to the Spb I/O target and utilizes
+		a helper routine to do work inside of locked code.
 
-  Arguments:
+	  Arguments:
 
-	SpbContext - Pointer to the current device context
-	Address    - The I2C register address to write to
-	Data       - A buffer to receive the data at at the above address
-	Length     - The amount of data to be read from the above address
+		SpbContext - Pointer to the current device context
+		Address    - The I2C register address to write to
+		Data       - A buffer to receive the data at at the above address
+		Length     - The amount of data to be read from the above address
 
-  Return Value:
+	  Return Value:
 
-	NTSTATUS Status indicating success or failure
+		NTSTATUS Status indicating success or failure
 
---*/
+	--*/
 {
 	NTSTATUS status;
 
@@ -198,29 +278,29 @@ SpbWriteDataSynchronously(
 
 NTSTATUS
 SpbReadDataSynchronously(
-	IN SPB_CONTEXT *SpbContext,
+	IN SPB_CONTEXT* SpbContext,
 	IN UCHAR Address,
 	_In_reads_bytes_(Length) PVOID Data,
 	IN ULONG Length)
-/*++
+	/*++
 
-  Routine Description:
+	  Routine Description:
 
-	This helper routine abstracts creating and sending an I/O
-	request (I2C Read) to the Spb I/O target.
+		This helper routine abstracts creating and sending an I/O
+		request (I2C Read) to the Spb I/O target.
 
-  Arguments:
+	  Arguments:
 
-	SpbContext - Pointer to the current device context
-	Address    - The I2C register address to read from
-	Data       - A buffer to receive the data at at the above address
-	Length     - The amount of data to be read from the above address
+		SpbContext - Pointer to the current device context
+		Address    - The I2C register address to read from
+		Data       - A buffer to receive the data at at the above address
+		Length     - The amount of data to be read from the above address
 
-  Return Value:
+	  Return Value:
 
-	NTSTATUS Status indicating success or failure
+		NTSTATUS Status indicating success or failure
 
---*/
+	--*/
 {
 	PUCHAR buffer;
 	WDFMEMORY memory;
@@ -374,7 +454,7 @@ SpbReadDataSynchronouslyFromAnyAddr(
 		SpbContext,
 		((UINT8*)Address)[0],
 		&(((UINT8*)Address)[1]),
-		AddressLength-1);
+		AddressLength - 1);
 
 	if (!NT_SUCCESS(status))
 	{
@@ -469,25 +549,25 @@ exit:
 
 VOID SpbTargetDeinitialize(
 	IN WDFDEVICE FxDevice,
-	IN SPB_CONTEXT *SpbContext)
-/*++
+	IN SPB_CONTEXT* SpbContext)
+	/*++
 
-  Routine Description:
+	  Routine Description:
 
-	This helper routine is used to free any members added to the SPB_CONTEXT,
-	note the SPB I/O target is parented to the device and will be
-	closed and free'd when the device is removed.
+		This helper routine is used to free any members added to the SPB_CONTEXT,
+		note the SPB I/O target is parented to the device and will be
+		closed and free'd when the device is removed.
 
-  Arguments:
+	  Arguments:
 
-	FxDevice   - Handle to the framework device object
-	SpbContext - Pointer to the current device context
+		FxDevice   - Handle to the framework device object
+		SpbContext - Pointer to the current device context
 
-  Return Value:
+	  Return Value:
 
-	NTSTATUS Status indicating success or failure
+		NTSTATUS Status indicating success or failure
 
---*/
+	--*/
 {
 	UNREFERENCED_PARAMETER(FxDevice);
 	UNREFERENCED_PARAMETER(SpbContext);
@@ -514,25 +594,25 @@ VOID SpbTargetDeinitialize(
 NTSTATUS
 SpbTargetInitialize(
 	IN WDFDEVICE FxDevice,
-	IN SPB_CONTEXT *SpbContext)
-/*++
+	IN SPB_CONTEXT* SpbContext)
+	/*++
 
-  Routine Description:
+	  Routine Description:
 
-	This helper routine opens the Spb I/O target and
-	initializes a request object used for the lifetime
-	of communication between this driver and Spb.
+		This helper routine opens the Spb I/O target and
+		initializes a request object used for the lifetime
+		of communication between this driver and Spb.
 
-  Arguments:
+	  Arguments:
 
-	FxDevice   - Handle to the framework device object
-	SpbContext - Pointer to the current device context
+		FxDevice   - Handle to the framework device object
+		SpbContext - Pointer to the current device context
 
-  Return Value:
+	  Return Value:
 
-	NTSTATUS Status indicating success or failure
+		NTSTATUS Status indicating success or failure
 
---*/
+	--*/
 {
 	WDF_OBJECT_ATTRIBUTES objectAttributes;
 	WDF_IO_TARGET_OPEN_PARAMS openParams;

@@ -41,24 +41,40 @@ typedef struct _SPB_CONTEXT
 } SPB_CONTEXT;
 
 NTSTATUS
+SpbDeviceWrite(
+	IN SPB_CONTEXT* SpbContext,
+	IN PVOID Data,
+	IN ULONG Length
+);
+
+NTSTATUS
+SpbDeviceWriteRead(
+	IN SPB_CONTEXT* SpbContext,
+	IN PVOID pInputBuffer,
+	IN PVOID pOutputBuffer,
+	IN ULONG inputLength,
+	IN ULONG outputLength
+);
+
+NTSTATUS
 SpbReadDataSynchronously(
-	IN SPB_CONTEXT *SpbContext,
+	IN SPB_CONTEXT* SpbContext,
 	IN UCHAR Address,
 	_In_reads_bytes_(Length) PVOID Data,
 	IN ULONG Length);
 
 VOID SpbTargetDeinitialize(
 	IN WDFDEVICE FxDevice,
-	IN SPB_CONTEXT *SpbContext);
+	IN SPB_CONTEXT* SpbContext);
 
 NTSTATUS
 SpbTargetInitialize(
 	IN WDFDEVICE FxDevice,
-	IN SPB_CONTEXT *SpbContext);
+	IN SPB_CONTEXT* SpbContext);
 
 NTSTATUS
 SpbWriteDataSynchronously(
-	IN SPB_CONTEXT *SpbContext,
+	IN SPB_CONTEXT* SpbContext,
 	IN UCHAR Address,
 	IN PVOID Data,
 	IN ULONG Length);

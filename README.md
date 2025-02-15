@@ -7,8 +7,11 @@
 
 * This driver is designed for the Samsung USB PD S2MM005 IC. 
 
+## Available features 
+* Read the status of Type-C (USB) through IRQ interrupt.
+
 ## License
-* Original author: DuoWoA authors
+* fsa4480_src author: DuoWoA authors
 * All code is licensed under MIT License.
   * Anyway, the original author(DuoWoA authors) must be labeled.
 

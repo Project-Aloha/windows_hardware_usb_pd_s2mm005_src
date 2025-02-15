@@ -21,6 +21,7 @@ Environment:
 #include <gpio.h>
 #include <wdf.h>
 #include "s2mm005.h"
+#include "s2mm005_cc.h"
 #include "device.tmh"
 
 #ifdef ALLOC_PRAGMA
@@ -186,7 +187,7 @@ s2mm005DevicePrepareHardware(
 		}
 		case CmResourceTypeInterrupt:
 		{
-		    if (InterruptFound = FALSE)
+		    if (InterruptFound == FALSE)
 			{
 				WDF_INTERRUPT_CONFIG_INIT(
 					&interruptConfig,
@@ -251,7 +252,7 @@ s2mm005DevicePrepareHardware(
 
 	devContext->InitializedSpbHardware = TRUE;
 
-	S2mm005_Get_TypeC_Status(Device, &TypeC_Status_initial);
+	S2mm005_Get_TypeC_Status(devContext, &TypeC_Status_initial);
 
 exit:
 	TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Leaving %!FUNC!: Status = 0x%08lX\n", status);

@@ -19,9 +19,9 @@ Environment:
 
 #ifdef ALLOC_PRAGMA
 #pragma alloc_text(INIT, DriverEntry)
-#pragma alloc_text(PAGE, fsa4480EvtDeviceAdd)
-#pragma alloc_text(PAGE, fsa4480EvtDriverContextCleanup)
-#pragma alloc_text(PAGE, fsa4480EvtDriverUnload)
+#pragma alloc_text(PAGE, s2mm005EvtDeviceAdd)
+#pragma alloc_text(PAGE, s2mm005EvtDriverContextCleanup)
+#pragma alloc_text(PAGE, s2mm005EvtDriverUnload)
 #endif
 
 NTSTATUS
@@ -70,11 +70,11 @@ Return Value:
 	// the framework driver object is deleted during driver unload.
 	//
 	WDF_OBJECT_ATTRIBUTES_INIT(&attributes);
-	attributes.EvtCleanupCallback = fsa4480EvtDriverContextCleanup;
+	attributes.EvtCleanupCallback = s2mm005EvtDriverContextCleanup;
 
 	WDF_DRIVER_CONFIG_INIT(&config,
-						   fsa4480EvtDeviceAdd);
-	config.EvtDriverUnload = fsa4480EvtDriverUnload;
+						   s2mm005EvtDeviceAdd);
+	config.EvtDriverUnload = s2mm005EvtDriverUnload;
 
 	status = WdfDriverCreate(DriverObject,
 							 RegistryPath,
@@ -95,7 +95,7 @@ Return Value:
 }
 
 NTSTATUS
-fsa4480EvtDeviceAdd(
+s2mm005EvtDeviceAdd(
 	_In_ WDFDRIVER Driver,
 	_Inout_ PWDFDEVICE_INIT DeviceInit)
 /*++
@@ -125,14 +125,14 @@ Return Value:
 
 	TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Entry");
 
-	status = fsa4480CreateDevice(DeviceInit);
+	status = s2mm005CreateDevice(DeviceInit);
 
 	TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Exit");
 
 	return status;
 }
 
-VOID fsa4480EvtDriverContextCleanup(
+VOID s2mm005EvtDriverContextCleanup(
 	_In_ WDFOBJECT DriverObject)
 /*++
 Routine Description:
@@ -153,7 +153,7 @@ Return Value:
 
 	TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Entry");
 
-	fsa4480DeviceUnPrepareHardware((WDFDEVICE)DriverObject);
+	s2mm005DeviceUnPrepareHardware((WDFDEVICE)DriverObject);
 
 	//
 	// Stop WPP Tracing
@@ -161,7 +161,7 @@ Return Value:
 	WPP_CLEANUP(NULL);
 }
 
-VOID fsa4480EvtDriverUnload(
+VOID s2mm005EvtDriverUnload(
 	IN WDFDRIVER Driver)
 /*++
 Routine Description:

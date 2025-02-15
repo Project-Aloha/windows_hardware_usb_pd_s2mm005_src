@@ -28,10 +28,10 @@ Environment:
 //
 
 DRIVER_INITIALIZE DriverEntry;
-EVT_WDF_DRIVER_DEVICE_ADD fsa4480EvtDeviceAdd;
-EVT_WDF_OBJECT_CONTEXT_CLEANUP fsa4480EvtDriverContextCleanup;
-EVT_WDF_DEVICE_PREPARE_HARDWARE fsa4480DevicePrepareHardware;
-EVT_WDF_DRIVER_UNLOAD fsa4480EvtDriverUnload;
+EVT_WDF_DRIVER_DEVICE_ADD s2mm005EvtDeviceAdd;
+EVT_WDF_OBJECT_CONTEXT_CLEANUP s2mm005EvtDriverContextCleanup;
+EVT_WDF_DEVICE_PREPARE_HARDWARE s2mm005DevicePrepareHardware;
+EVT_WDF_DRIVER_UNLOAD s2mm005EvtDriverUnload;
 
-VOID fsa4480DeviceUnPrepareHardware(
+VOID s2mm005DeviceUnPrepareHardware(
 	WDFDEVICE Device);

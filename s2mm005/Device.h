@@ -17,7 +17,7 @@ Environment:
 #pragma once
 
 #include "spb.h"
-#include "fsa4480.h"
+#include "s2mm005.h"
 
 //
 // The device context performs the same job as
@@ -31,25 +31,12 @@ typedef struct _DEVICE_CONTEXT
 	WDFDEVICE Device;
 
 	BOOLEAN InitializedSpbHardware;
-	BOOLEAN InitializedEnGpioHardware;
-	BOOLEAN InitializedAcpiInterface;
-	BOOLEAN InitializedFSAHardware;
 
 	//
 	// Spb (I2C) related members used for the lifetime of the device
 	//
 	SPB_CONTEXT I2CContext;
 
-	LARGE_INTEGER CCOutGpioId;
-	WDFIOTARGET CCOutGpio;
-
-	LARGE_INTEGER EnGpioId;
-	WDFIOTARGET EnGpio;
-
-	ACPI_INTERFACE_STANDARD2 AcpiInterface;
-
-	ULONG CCOUT;
-	USBC_PARTNER USBCPartner;
 } DEVICE_CONTEXT, *PDEVICE_CONTEXT;
 
 //
@@ -63,5 +50,5 @@ WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(DEVICE_CONTEXT, DeviceGetContext)
 // Function to initialize the device and its callbacks
 //
 NTSTATUS
-fsa4480CreateDevice(
+s2mm005CreateDevice(
 	_Inout_ PWDFDEVICE_INIT DeviceInit);

@@ -1,0 +1,50 @@
+;
+; s2mm005.inf
+;
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = USBDevice
+ClassGuid   = {88BAE032-5A81-49f0-BC3D-A4FF138216D6}
+Provider    = %ProviderName%
+CatalogFile = s2mm005.cat
+DriverVer   = 
+PnpLockdown = 1
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+s2mm005.sys = 1,,
+
+[Manufacturer]
+%ManufacturerName% = Standard, NT$ARCH$
+
+[Standard.NT$ARCH$]
+%s2mm005.DeviceDesc% = s2mm005_Device, ACPI\S2MM005
+
+[s2mm005_Device.NT]
+CopyFiles = Drivers_Dir
+
+[Drivers_Dir]
+s2mm005.sys
+
+[s2mm005_Device.NT.Services]
+AddService = s2mm005, %SPSVCINST_ASSOCSERVICE%, s2mm005_Service_Inst
+
+[s2mm005_Service_Inst]
+DisplayName    = %s2mm005.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\s2mm005.sys
+
+[Strings]
+SPSVCINST_ASSOCSERVICE = 0x00000002
+ProviderName           = "XiaoYeZi"
+ManufacturerName       = "Samsung"
+DiskName               = "Samsung USB PD S2MM005 Installation Disk"
+s2mm005.DeviceDesc     = "Samsung USB PD S2MM005 Device"
+s2mm005.SVCDESC        = "Samsung USB PD S2MM005 Service"

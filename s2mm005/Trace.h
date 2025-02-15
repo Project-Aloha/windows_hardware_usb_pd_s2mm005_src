@@ -22,7 +22,7 @@ Environment:
 
 #define WPP_CONTROL_GUIDS                                             \
     WPP_DEFINE_CONTROL_GUID(                                          \
-        fsa4480TraceGuid, (a268a892, 61a7, 4fc8, 8953, 6103ad57fe7e), \
+        s2mm005TraceGuid, (a268a892, 61a7, 4fc8, 8953, 6103ad57fe7e), \
                                                                       \
         WPP_DEFINE_BIT(MYDRIVER_ALL_INFO)                             \
             WPP_DEFINE_BIT(TRACE_DRIVER)                              \

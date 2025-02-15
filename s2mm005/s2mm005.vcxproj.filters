@@ -22,7 +22,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Inf Include="fsa4480.inf">
+    <Inf Include="s2mm005.inf">
       <Filter>Driver Files</Filter>
     </Inf>
   </ItemGroup>
@@ -39,7 +39,7 @@
     <ClInclude Include="Spb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="fsa4480.h">
+    <ClInclude Include="s2mm005.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -53,7 +53,7 @@
     <ClCompile Include="Spb.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="fsa4480.c">
+    <ClCompile Include="s2mm005.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

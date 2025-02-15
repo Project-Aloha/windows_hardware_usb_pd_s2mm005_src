@@ -32,6 +32,8 @@ typedef struct _DEVICE_CONTEXT
 
 	BOOLEAN InitializedSpbHardware;
 
+    WDFINTERRUPT            Interrupt;
+
 	//
 	// Spb (I2C) related members used for the lifetime of the device
 	//

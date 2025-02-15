@@ -39,3 +39,9 @@
 #define SECONDS(seconds) \
 	(((signed __int64)(seconds)) * MILLISECONDS(1000L))
 #endif
+
+BOOLEAN
+OnInterruptIsr(
+    IN WDFINTERRUPT Interrupt,
+    IN ULONG MessageID
+);

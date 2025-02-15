@@ -153,6 +153,8 @@ s2mm005DevicePrepareHardware(
 		"Looking for resources");
 
 	BOOLEAN I2CFound = FALSE;
+    BOOLEAN InterruptFound = FALSE;
+    ULONG interruptIndex = 0;
 
 	for (i = 0; i < resourceCount; i++)
 	{
@@ -180,13 +182,26 @@ s2mm005DevicePrepareHardware(
 			}
 			break;
 		}
+        case CmResourceTypeInterrupt:
+		{
+            if (InterruptFound == FALSE)
+            {
+				TraceEvents(
+					TRACE_LEVEL_INFORMATION,
+					TRACE_DRIVER,
+					"Found Interrupt Gpio!");
+                InterruptFound = TRUE;
+                interruptIndex = i;
+            }
+            break;
+		}
+		default:
+			//
+			// Ignoring all other resource types.
+			//
+			break;
 		}
 	}
-
-	TraceEvents(
-		TRACE_LEVEL_INFORMATION,
-		TRACE_DRIVER,
-		"All resources have been found");
 
 	TraceEvents(
 		TRACE_LEVEL_INFORMATION,
@@ -210,6 +225,26 @@ s2mm005DevicePrepareHardware(
 	}
 
 	devContext->InitializedSpbHardware = TRUE;
+
+	WDF_INTERRUPT_CONFIG interruptConfig;
+	WDF_INTERRUPT_CONFIG_INIT(
+		&interruptConfig,
+		OnInterruptIsr,
+		NULL);
+
+	interruptConfig.PassiveHandling = TRUE;
+	interruptConfig.InterruptTranslated = WdfCmResourceListGetDescriptor(
+		ResourcesTranslated,
+		interruptIndex);
+	interruptConfig.InterruptRaw = WdfCmResourceListGetDescriptor(
+		ResourcesRaw,
+		interruptIndex);
+
+	status = WdfInterruptCreate(
+		devContext->Device,
+		&interruptConfig,
+		WDF_NO_OBJECT_ATTRIBUTES,
+		&devContext->Interrupt);
 
 exit:
 	TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Leaving %!FUNC!: Status = 0x%08lX\n", status);
